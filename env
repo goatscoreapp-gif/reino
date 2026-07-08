@@ -1,0 +1,8 @@
+# Copie este arquivo para ".env" e coloque seu usuário do TikTok (sem o @)
+TIKTOK_USERNAME=denizindicacoes
+
+# Chave gratuita criada em https://www.eulerstream.com (veja o passo a passo abaixo)
+EULER_API_KEY=euler_OGY2ZGI2ODMxMmE5OGQ1ZTVkZjAxNWM5YzE5ZDM1NmM4MTE1OTQ1MWRiNDkzZGU0MmFmN2Q1
+
+# Porta local onde o jogo vai rodar (normalmente não precisa mudar)
+PORT=3000
