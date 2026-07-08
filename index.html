@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Reino Vivo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --dusk-deep:#241638;
+    --dusk-mid:#4a3068;
+    --dusk-warm:#8a4f6e;
+    --ember:#e8734a;
+    --gold:#f2b441;
+    --parchment:#f4ede1;
+    --rose:#d9667a;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0;padding:0;width:100%;height:100%;overflow:hidden;
+    font-family:'Quicksand',sans-serif;
+    background:transparent;
+  }
+  #cena{
+    position:relative;width:100vw;height:100vh;
+    background:linear-gradient(180deg, var(--dusk-deep) 0%, var(--dusk-mid) 45%, var(--dusk-warm) 75%, #3a1f2e 100%);
+    overflow:hidden;
+  }
+  /* Estrelas */
+  .estrela{
+    position:absolute;width:2px;height:2px;background:var(--parchment);
+    border-radius:50%;opacity:.7;animation:piscar 3s ease-in-out infinite;
+  }
+  @keyframes piscar{0%,100%{opacity:.2;}50%{opacity:.9;}}
+
+  /* Lua */
+  #lua{
+    position:absolute;top:6%;right:8%;width:64px;height:64px;border-radius:50%;
+    background:radial-gradient(circle at 35% 35%, #fff8e8, var(--gold) 70%);
+    box-shadow:0 0 40px 10px rgba(242,180,65,.35);
+  }
+
+  /* Colinas */
+  .colina{position:absolute;bottom:0;left:0;width:100%;}
+  #colina-fundo{height:38%;background:#2c1c3e;clip-path:polygon(0 60%,15% 40%,35% 55%,55% 30%,75% 50%,100% 35%,100% 100%,0 100%);}
+  #colina-frente{height:26%;background:#1c1226;clip-path:polygon(0 70%,20% 45%,40% 65%,60% 35%,80% 60%,100% 45%,100% 100%,0 100%);}
+
+  /* Reino: onde os prédios nascem */
+  #reino{
+    position:absolute;bottom:6%;left:50%;transform:translateX(-50%);
+    width:70%;height:24%;display:flex;align-items:flex-end;justify-content:center;
+    gap:6px;
+  }
+  .predio{
+    display:flex;align-items:flex-end;justify-content:center;
+    animation:nascer .6s cubic-bezier(.2,1.4,.4,1) both;
+    filter:drop-shadow(0 0 6px rgba(242,180,65,.25));
+  }
+  @keyframes nascer{from{transform:translateY(40px) scale(.4);opacity:0;}to{transform:translateY(0) scale(1);opacity:1;}}
+
+  .casa{width:34px;height:30px;background:linear-gradient(180deg,#5b3a2e,#3f2820);border-radius:3px 3px 0 0;position:relative;}
+  .casa::before{content:'';position:absolute;top:-14px;left:-6px;width:46px;height:16px;background:#7a3b2e;clip-path:polygon(50% 0,100% 100%,0 100%);}
+  .casa::after{content:'';position:absolute;top:8px;left:12px;width:8px;height:8px;background:var(--gold);border-radius:1px;box-shadow:0 0 4px var(--gold);}
+
+  .torre{width:26px;height:70px;background:linear-gradient(180deg,#5c5570,#332c46);border-radius:2px 2px 0 0;position:relative;}
+  .torre::before{content:'';position:absolute;top:-16px;left:-3px;width:32px;height:18px;background:var(--rose);clip-path:polygon(50% 0,100% 100%,0 100%);}
+  .torre::after{content:'';position:absolute;top:10px;left:9px;width:8px;height:8px;background:var(--gold);border-radius:1px;box-shadow:0 0 5px var(--gold);}
+
+  .castelo{width:64px;height:100px;background:linear-gradient(180deg,#7a6a8f,#463a5c);border-radius:2px;position:relative;}
+  .castelo::before{content:'';position:absolute;top:-10px;left:0;width:100%;height:12px;
+    background:repeating-linear-gradient(90deg,#7a6a8f 0 8px,transparent 8px 14px);}
+  .castelo .bandeira{position:absolute;top:-34px;left:50%;width:2px;height:24px;background:#e8e0d0;}
+  .castelo .bandeira::after{content:'';position:absolute;top:0;left:2px;width:16px;height:10px;background:var(--ember);
+    clip-path:polygon(0 0,100% 50%,0 100%);animation:tremular 1.4s ease-in-out infinite;}
+  @keyframes tremular{0%,100%{transform:skewY(0);}50%{transform:skewY(6deg);}}
+  .castelo::after{content:'';position:absolute;top:14px;left:24px;width:16px;height:22px;background:var(--dusk-deep);border-radius:8px 8px 0 0;}
+
+  /* Dragão gigante */
+  #dragao{
+    position:absolute;top:18%;left:-200px;font-size:70px;opacity:0;
+    filter:drop-shadow(0 0 18px var(--ember));
+  }
+  #dragao.voar{animation:voar 6s linear forwards;}
+  @keyframes voar{
+    0%{left:-200px;opacity:0;top:20%;}
+    10%{opacity:1;}
+    50%{top:12%;}
+    90%{opacity:1;}
+    100%{left:110%;opacity:0;top:22%;}
+  }
+
+  /* Fogos */
+  .fogo{position:absolute;width:6px;height:6px;border-radius:50%;pointer-events:none;}
+
+  /* HUD topo direito: diamantes */
+  #hud-diamantes{
+    position:absolute;top:22px;right:22px;
+    background:rgba(36,22,56,.6);backdrop-filter:blur(6px);
+    border:1px solid rgba(242,180,65,.4);border-radius:14px;
+    padding:10px 18px;color:var(--parchment);text-align:right;
+  }
+  #hud-diamantes .valor{
+    font-family:'Cinzel',serif;font-size:26px;color:var(--gold);font-weight:700;
+    text-shadow:0 0 12px rgba(242,180,65,.5);
+  }
+  #hud-diamantes .rotulo{font-size:11px;letter-spacing:.12em;text-transform:uppercase;opacity:.75;}
+
+  /* Placar */
+  #placar{
+    position:absolute;top:22px;left:22px;width:220px;
+    background:rgba(36,22,56,.6);backdrop-filter:blur(6px);
+    border:1px solid rgba(217,102,122,.35);border-radius:14px;
+    padding:14px 16px;color:var(--parchment);
+  }
+  #placar h3{margin:0 0 8px;font-family:'Cinzel',serif;font-size:14px;letter-spacing:.08em;
+    text-transform:uppercase;color:var(--rose);font-weight:700;}
+  #placar ol{margin:0;padding:0 0 0 18px;font-size:13px;line-height:1.9;}
+  #placar li span{color:var(--gold);font-weight:600;float:right;}
+
+  /* Curtidas: coração pulsando + contador */
+  #hud-curtidas{
+    position:absolute;bottom:24px;right:22px;color:var(--parchment);
+    display:flex;align-items:center;gap:8px;font-size:14px;
+    background:rgba(36,22,56,.5);border-radius:20px;padding:8px 14px;
+  }
+  #coracao{color:var(--rose);animation:bater 1.1s ease-in-out infinite;}
+  @keyframes bater{0%,100%{transform:scale(1);}50%{transform:scale(1.25);}}
+
+  /* Partículas de curtida subindo */
+  .particula{position:absolute;bottom:14%;pointer-events:none;font-size:18px;
+    animation:subir 2.6s ease-out forwards;}
+  @keyframes subir{
+    0%{transform:translateY(0) translateX(0) scale(.6);opacity:0;}
+    15%{opacity:1;}
+    100%{transform:translateY(-260px) translateX(var(--dx,20px)) scale(1.1);opacity:0;}
+  }
+
+  /* Balões de comentário */
+  #comentarios{
+    position:absolute;bottom:6%;left:0;width:100%;height:60%;
+    pointer-events:none;
+  }
+  .balao{
+    position:absolute;max-width:220px;background:rgba(244,237,225,.95);
+    color:#3a2a44;padding:8px 12px;border-radius:14px;font-size:13px;font-weight:600;
+    box-shadow:0 4px 14px rgba(0,0,0,.25);
+    animation:flutuar 5s ease-in forwards;
+  }
+  .balao b{color:var(--dusk-warm);font-weight:700;}
+  @keyframes flutuar{
+    0%{transform:translateY(20px);opacity:0;}
+    10%{opacity:1;transform:translateY(0);}
+    80%{opacity:1;}
+    100%{transform:translateY(-90px);opacity:0;}
+  }
+
+  /* Faixa de novo seguidor */
+  #faixa-seguidor{
+    position:absolute;top:14%;left:50%;transform:translate(-50%,-140%);
+    background:linear-gradient(90deg,var(--rose),var(--ember));
+    color:var(--parchment);padding:10px 26px;border-radius:30px;
+    font-family:'Cinzel',serif;font-weight:700;font-size:15px;
+    box-shadow:0 6px 20px rgba(217,102,122,.4);
+    transition:transform .5s cubic-bezier(.2,1.6,.4,1);
+    white-space:nowrap;
+  }
+  #faixa-seguidor.mostrar{transform:translate(-50%,0);}
+
+  /* Notificação de presente grande */
+  #anuncio-presente{
+    position:absolute;top:38%;left:50%;transform:translate(-50%,20px) scale(.8);
+    opacity:0;text-align:center;pointer-events:none;
+    transition:all .4s cubic-bezier(.2,1.6,.4,1);
+  }
+  #anuncio-presente.mostrar{opacity:1;transform:translate(-50%,0) scale(1);}
+  #anuncio-presente .titulo{font-family:'Cinzel',serif;color:var(--gold);font-size:22px;
+    text-shadow:0 0 16px rgba(242,180,65,.6);}
+  #anuncio-presente .sub{color:var(--parchment);font-size:14px;margin-top:4px;}
+
+  /* Status de conexão (discreto) */
+  #status{
+    position:absolute;bottom:22px;left:22px;font-size:11px;color:var(--parchment);
+    opacity:.55;display:flex;align-items:center;gap:6px;
+  }
+  #status .bolinha{width:7px;height:7px;border-radius:50%;background:#888;}
+  #status.on .bolinha{background:#6fd08c;box-shadow:0 0 6px #6fd08c;}
+  #status.off .bolinha{background:#e05a5a;box-shadow:0 0 6px #e05a5a;}
+
+  /* Painel de teste (tecla T) */
+  #teste{
+    position:absolute;bottom:22px;left:50%;transform:translateX(-50%);
+    display:none;gap:8px;background:rgba(0,0,0,.55);padding:10px;border-radius:12px;
+  }
+  #teste.aberto{display:flex;}
+  #teste button{
+    font-family:'Quicksand',sans-serif;font-weight:700;font-size:12px;
+    background:var(--dusk-warm);color:var(--parchment);border:none;border-radius:8px;
+    padding:8px 12px;cursor:pointer;
+  }
+  #teste button:hover{background:var(--rose);}
+</style>
+</head>
+<body>
+<div id="cena">
+  <div id="lua"></div>
+  <div id="colina-fundo" class="colina"></div>
+  <div id="colina-frente" class="colina"></div>
+  <div id="reino"></div>
+  <div id="dragao">🐉</div>
+  <div id="comentarios"></div>
+
+  <div id="hud-diamantes">
+    <div class="rotulo">Diamantes do Reino</div>
+    <div class="valor" id="valor-diamantes">0</div>
+  </div>
+
+  <div id="placar">
+    <h3>Maiores Doadores</h3>
+    <ol id="lista-placar"><li>Aguardando presentes...</li></ol>
+  </div>
+
+  <div id="hud-curtidas"><span id="coracao">❤</span> <span id="valor-curtidas">0</span></div>
+
+  <div id="faixa-seguidor">✦ Novo seguidor: <span></span> ✦</div>
+  <div id="anuncio-presente">
+    <div class="titulo"></div>
+    <div class="sub"></div>
+  </div>
+
+  <div id="status" class="off"><span class="bolinha"></span><span id="status-texto">Conectando à live...</span></div>
+
+  <div id="teste">
+    <button onclick="testarPresente(5)">🎁 Presente pequeno</button>
+    <button onclick="testarPresente(50)">🎁 Presente médio</button>
+    <button onclick="testarPresente(500)">🎁 Presente grande</button>
+    <button onclick="testarPresente(2000)">🐉 Presente ÉPICO</button>
+    <button onclick="testarComentario()">💬 Comentário</button>
+    <button onclick="testarCurtida()">❤ Curtidas</button>
+    <button onclick="testarSeguidor()">✦ Seguidor</button>
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const socket = io();
+const cena = document.getElementById('cena');
+const reino = document.getElementById('reino');
+
+// ---------- Estrelas ----------
+for(let i=0;i<70;i++){
+  const e = document.createElement('div');
+  e.className='estrela';
+  e.style.left = Math.random()*100+'%';
+  e.style.top = Math.random()*55+'%';
+  e.style.animationDelay = (Math.random()*3)+'s';
+  cena.appendChild(e);
+}
+
+// ---------- Estado ----------
+let diamantesTotal = 0;
+const placarUsuarios = {}; // usuario -> total
+
+function atualizarDiamantes(add){
+  diamantesTotal += add;
+  document.getElementById('valor-diamantes').textContent = diamantesTotal.toLocaleString('pt-BR');
+}
+
+function atualizarPlacar(usuario, valor){
+  placarUsuarios[usuario] = (placarUsuarios[usuario]||0) + valor;
+  const ranking = Object.entries(placarUsuarios).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const lista = document.getElementById('lista-placar');
+  lista.innerHTML = ranking.map(([nome,total])=>`<li>${nome} <span>${total.toLocaleString('pt-BR')}</span></li>`).join('');
+}
+
+// ---------- Construção do reino ----------
+function nascerPredio(tipo){
+  const div = document.createElement('div');
+  div.className = 'predio';
+  if(tipo==='castelo'){
+    div.classList.add('castelo');
+    const b = document.createElement('div');
+    b.className='bandeira';
+    div.appendChild(b);
+  } else {
+    div.classList.add(tipo);
+  }
+  reino.appendChild(div);
+  // Limita a quantidade de prédios na tela para não lotar
+  if(reino.children.length > 22) reino.removeChild(reino.firstChild);
+}
+
+function dragaoVoar(){
+  const d = document.getElementById('dragao');
+  d.classList.remove('voar');
+  void d.offsetWidth; // reinicia animação
+  d.classList.add('voar');
+  lancarFogos();
+}
+
+function lancarFogos(){
+  const cores = ['#f2b441','#e8734a','#d9667a','#f4ede1'];
+  for(let i=0;i<40;i++){
+    setTimeout(()=>{
+      const f = document.createElement('div');
+      f.className='fogo';
+      f.style.left = (20+Math.random()*60)+'%';
+      f.style.top = (10+Math.random()*30)+'%';
+      f.style.background = cores[Math.floor(Math.random()*cores.length)];
+      f.style.boxShadow = `0 0 10px 3px ${f.style.background}`;
+      cena.appendChild(f);
+      f.animate([
+        {transform:'translateY(0) scale(1)', opacity:1},
+        {transform:`translateY(${60+Math.random()*80}px) scale(.2)`, opacity:0}
+      ], {duration:1200+Math.random()*600, easing:'ease-out'});
+      setTimeout(()=>f.remove(), 2000);
+    }, i*30);
+  }
+}
+
+function anunciarPresente(nome, usuario, valor){
+  const el = document.getElementById('anuncio-presente');
+  el.querySelector('.titulo').textContent = `✦ ${nome} ✦`;
+  el.querySelector('.sub').textContent = `de @${usuario} — ${valor.toLocaleString('pt-BR')} diamantes`;
+  el.classList.add('mostrar');
+  setTimeout(()=>el.classList.remove('mostrar'), 3200);
+}
+
+// ---------- Evento: presente ----------
+function processarPresente(usuario, nome, valor){
+  atualizarDiamantes(valor);
+  atualizarPlacar(usuario, valor);
+
+  if(valor >= 1000){
+    dragaoVoar();
+    anunciarPresente(nome, usuario, valor);
+  } else if(valor >= 100){
+    nascerPredio('castelo');
+    anunciarPresente(nome, usuario, valor);
+  } else if(valor >= 10){
+    nascerPredio('torre');
+  } else {
+    nascerPredio('casa');
+  }
+}
+
+// ---------- Evento: comentário ----------
+function processarComentario(usuario, texto){
+  const balao = document.createElement('div');
+  balao.className='balao';
+  balao.style.left = (10+Math.random()*70)+'%';
+  balao.innerHTML = `<b>@${usuario}:</b> ${escaparTexto(texto).slice(0,80)}`;
+  document.getElementById('comentarios').appendChild(balao);
+  setTimeout(()=>balao.remove(), 5200);
+}
+function escaparTexto(t){
+  const d = document.createElement('div');
+  d.textContent = t;
+  return d.innerHTML;
+}
+
+// ---------- Evento: curtida ----------
+let curtidasTotal = 0;
+function processarCurtida(qtd){
+  curtidasTotal += qtd;
+  document.getElementById('valor-curtidas').textContent = curtidasTotal.toLocaleString('pt-BR');
+  for(let i=0;i<Math.min(qtd,6);i++){
+    setTimeout(()=>{
+      const p = document.createElement('div');
+      p.className='particula';
+      p.textContent='❤';
+      p.style.left = (55+Math.random()*30)+'%';
+      p.style.setProperty('--dx',(Math.random()*60-30)+'px');
+      cena.appendChild(p);
+      setTimeout(()=>p.remove(), 2700);
+    }, i*90);
+  }
+}
+
+// ---------- Evento: novo seguidor ----------
+function processarSeguidor(usuario){
+  const faixa = document.getElementById('faixa-seguidor');
+  faixa.querySelector('span').textContent = '@'+usuario;
+  faixa.classList.add('mostrar');
+  setTimeout(()=>faixa.classList.remove('mostrar'), 3500);
+}
+
+// ---------- Conexão com o servidor ----------
+socket.on('presente', d => processarPresente(d.usuario, d.nome, d.valor));
+socket.on('comentario', d => processarComentario(d.usuario, d.texto));
+socket.on('curtida', d => processarCurtida(1));
+socket.on('seguidor', d => processarSeguidor(d.usuario));
+socket.on('status', d => {
+  const s = document.getElementById('status');
+  s.className = d.conectado ? 'on' : 'off';
+  document.getElementById('status-texto').textContent = d.conectado
+    ? 'Conectado à live'
+    : 'Reconectando à live...';
+});
+
+// ---------- Painel de teste (tecla T) ----------
+document.addEventListener('keydown', e=>{
+  if(e.key.toLowerCase()==='t'){
+    document.getElementById('teste').classList.toggle('aberto');
+  }
+});
+function testarPresente(valor){ processarPresente('usuario_teste', 'Rosa', valor); }
+function testarComentario(){ processarComentario('fã_teste', 'Que reino lindo! 😍'); }
+function testarCurtida(){ processarCurtida(5); }
+function testarSeguidor(){ processarSeguidor('novo_fã_'+Math.floor(Math.random()*999)); }
+</script>
+</body>
+</html>
